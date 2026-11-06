@@ -1,0 +1,222 @@
+:root {
+  --motion-fast: 150ms;
+  --motion-normal: 220ms;
+  --motion-slow: 360ms;
+  --motion-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.guide-help {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--divider);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+.app-header {
+  gap: 16px;
+}
+@media (max-width: 700px) {
+  .app-header {
+    gap: 8px;
+    padding-inline: 16px;
+  }
+  .app-header nav button {
+    padding-inline: 8px;
+  }
+  .brand {
+    font-size: 14px;
+    gap: 6px;
+  }
+  .brand-mark {
+    width: 24px;
+    height: 24px;
+  }
+}
+.coach-dialog {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100dvh;
+  background: transparent;
+  color: var(--text-primary);
+  overflow: hidden;
+}
+.coach-dialog::backdrop {
+  background: #0008;
+}
+.coach-ring {
+  position: fixed;
+  border: 2px solid var(--qq-green);
+  border-radius: 16px;
+  pointer-events: none;
+  box-shadow: 0 0 0 3px #ffffff20;
+}
+.coach-card {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(350px, calc(100vw - 32px));
+  padding: 20px;
+  border: 1px solid var(--divider);
+  border-radius: 24px;
+  background: var(--surface-elevated);
+  box-shadow: 0 16px 48px #0006;
+}
+.coach-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.coach-heading h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.coach-heading span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.coach-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 16px 0;
+  min-height: 48px;
+}
+.coach-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.coach-actions .text-button {
+  padding: 12px;
+}
+.segment-modes {
+  position: relative;
+  isolation: isolate;
+}
+.segment-modes::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / 3);
+  border-radius: 12px;
+  background: var(--qq-green-soft);
+  transition: transform var(--motion-normal) var(--motion-ease);
+}
+.segment-modes.mode-matched::before {
+  transform: translateX(100%);
+}
+.segment-modes.mode-sequential::before {
+  transform: translateX(200%);
+}
+.segment-modes button[aria-pressed="true"] {
+  background: transparent;
+}
+.editor-wave-panel {
+  overflow: hidden;
+}
+.wave {
+  transform-origin: left center;
+}
+button {
+  transition:
+    background-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out;
+}
+.swipe-front {
+  transition: transform var(--motion-normal) var(--motion-ease);
+}
+.swipe-track {
+  animation: row-appear var(--motion-normal) ease-out;
+}
+.editor {
+  animation: page-appear var(--motion-normal) ease-out;
+}
+.phase-label {
+  animation: phase-appear var(--motion-normal) ease-out;
+}
+.track-sheet[open] {
+  animation: sheet-appear var(--motion-slow) var(--motion-ease);
+}
+.undo-snackbar {
+  animation: phase-appear var(--motion-fast) ease-out;
+}
+.preparation-status.quick::before,
+.preparation-status.deep::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--qq-green);
+  margin-right: 6px;
+  animation: ready-dot var(--motion-normal) ease-out;
+}
+@keyframes row-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes page-appear {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes phase-appear {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes sheet-appear {
+  from {
+    opacity: 0.4;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ready-dot {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

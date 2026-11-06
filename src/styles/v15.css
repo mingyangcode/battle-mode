@@ -1,0 +1,309 @@
+.primary-page-action {
+  position: fixed;
+  z-index: 39;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+  padding: 12px 16px;
+  background: var(--surface-glass);
+  backdrop-filter: blur(18px);
+}
+.primary-page-action > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 952px;
+  height: 48px;
+  min-height: 48px;
+  margin: auto;
+  padding: 0 20px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.primary-page-action > button svg {
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+.primary-page-caption {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 12px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  background: var(--bg-primary);
+}
+.live.live-idle {
+  padding-bottom: 84px;
+  min-height: calc(100dvh - 155px);
+}
+.live-idle .live-status {
+  padding-top: clamp(60px, 18dvh, 160px);
+}
+.live-idle .live-status > svg {
+  color: var(--brand-green);
+  margin-bottom: 18px;
+}
+.live-idle .live-status h1 {
+  font-size: 30px;
+}
+.live-idle .live-actions {
+  margin: 0;
+  padding: 0;
+}
+.app-main {
+  touch-action: pan-y;
+}
+[hidden] {
+  display: none !important;
+}
+.live-monitor {
+  position: relative;
+  isolation: isolate;
+}
+.live-monitor > :not(canvas):not(dialog) {
+  position: relative;
+  z-index: 1;
+}
+.live-monitor > .live-status,
+.live-monitor > .live-track,
+.live-monitor > .live-actions {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.queue-open {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  margin: 12px auto;
+}
+.queue-split {
+  height: calc(100dvh - 154px);
+  min-height: 500px;
+  display: grid;
+  grid-template-rows: minmax(225px, 46%) minmax(265px, 54%);
+  padding: 0;
+}
+.queue-split .live-monitor {
+  overflow: auto;
+}
+.queue-split .live-status {
+  padding: 4px 0;
+}
+.queue-split .live-status h1 {
+  font-size: 23px;
+}
+.queue-split .phase-countdown {
+  font-size: 38px;
+  margin: 0;
+  padding: 0;
+}
+.queue-split .live-track {
+  padding: 4px 0;
+}
+.queue-split .live-song {
+  margin-bottom: 4px;
+}
+.queue-split .live-song h2 {
+  font-size: 14px;
+}
+.queue-split .live-track .wave {
+  height: 38px;
+}
+.queue-split .live-track-footer,
+.queue-split .timeline-labels,
+.queue-split .live-song p,
+.queue-split .eyebrow {
+  display: none;
+}
+.queue-split .live-actions {
+  margin-top: 4px;
+  padding: 4px 0;
+}
+.queue-split .transport-controls button {
+  min-height: 44px;
+  padding: 6px;
+}
+.queue-panel {
+  background: var(--surface);
+  border-top: 1px solid var(--divider);
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 8px 12px;
+  animation: queue-expand 260ms ease-out;
+}
+.queue-panel header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: none;
+}
+.queue-panel h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.queue-panel h2 small {
+  color: var(--text-secondary);
+}
+.queue-panel header button {
+  background: transparent;
+  min-height: 44px;
+}
+.queue-scroll {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+.queue-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 76px;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--divider);
+  touch-action: none;
+  user-select: none;
+}
+.queue-item > div {
+  flex: 1;
+  min-width: 0;
+}
+.queue-item strong,
+.queue-item small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.queue-item strong {
+  font-size: 14px;
+}
+.queue-item small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.queue-item.dragging {
+  background: var(--brand-green-soft);
+  transform: scale(1.02);
+  box-shadow: 0 4px 14px #0002;
+}
+.queue-item details {
+  position: relative;
+  touch-action: manipulation;
+}
+.queue-item summary {
+  list-style: none;
+  padding: 12px;
+  cursor: pointer;
+}
+.queue-item details[open] > div {
+  position: absolute;
+  right: 0;
+  top: 35px;
+  z-index: 5;
+  display: flex;
+  background: var(--surface-elevated);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px #0003;
+}
+.queue-item details button {
+  padding: 8px;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.queue-choice {
+  display: grid;
+  grid-template-columns: 1fr 28px;
+  text-align: left;
+  width: 100%;
+  min-height: 64px;
+  border-bottom: 1px solid var(--divider);
+  background: transparent;
+}
+.queue-choice strong {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.queue-choice small {
+  grid-column: 1;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.queue-choice span {
+  grid-column: 2;
+  grid-row: 1/3;
+  align-self: center;
+}
+.queue-choice.played {
+  opacity: 0.55;
+}
+.queue-add {
+  flex: none;
+  min-height: 44px;
+  width: 100%;
+  margin-top: 6px;
+}
+@keyframes queue-expand {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .queue-panel {
+    animation: none;
+  }
+}
+/* Keep the low-priority stop action reachable even in the compact monitor. */
+.queue-split .live-actions { position:static; }
+.queue-split .end-session { position:absolute; z-index:5; top:0; right:4px; min-height:44px; padding:4px 8px; margin:0; font-size:11px; color:var(--text-secondary); }
+/* Grid children must shrink below their long titles' min-content width (Safari). */
+.app,.app-main,.app-main > div { min-width:0; }
+.live,.live-monitor,.live-track,.live-song,.live-actions,.queue-panel,.queue-scroll,.queue-swipe { min-width:0; max-width:100%; }
+.live-song > div:first-child { min-width:0; flex:1; }
+.live-song h2 { overflow:hidden; text-overflow:ellipsis; }
+.live .transport-controls { grid-template-columns:minmax(0,1.35fr) repeat(2,minmax(0,1fr)); }
+.live .transport-controls button { min-width:0; }
+.queue-split { grid-template-columns:minmax(0,1fr); min-height:0; height:calc(100dvh - 68px - var(--bottom-nav-height) - env(safe-area-inset-bottom,0px) - 12px); grid-template-rows:minmax(240px,46%) minmax(0,1fr); }
+.queue-split .live-monitor { overflow:hidden; }
+.queue-split .live-status { padding:4px 0; }
+.queue-split .live-song h2 { white-space:nowrap; display:block; }
+.queue-panel > .hint { margin:4px 0; font-size:12px; }
+.queue-choice { grid-template-columns:minmax(0,1fr) 28px; }
+.queue-choice > * { min-width:0; }
+.queue-swipe { position:relative; overflow:hidden; flex:none; }
+.queue-swipe.is-dragging { overflow:visible; z-index:10; }
+.queue-item { position:relative; background:var(--surface); width:100%; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; touch-action:none; transition:transform 160ms ease-out; }
+.queue-item * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+.queue-item.dragging { z-index:10; transition:none; background:var(--brand-green-soft); box-shadow:0 6px 20px #0003; }
+.queue-item:active { transition:none; }
+.queue-grip { color:var(--text-secondary); font-size:24px; padding:8px; flex:none; }
+.queue-delete { position:absolute; inset:0 auto 0 0; width:88px; border:0; border-radius:0; background:#c73545; color:white; font-weight:600; }
+@media(max-height:700px){.queue-split{grid-template-rows:230px minmax(0,1fr)}.queue-split .phase-countdown{font-size:30px}.queue-split .live-track .wave{height:30px}.queue-split .live-track .legend{font-size:10px;padding:2px 0}.queue-panel header button{min-height:36px}.queue-item{min-height:64px}}
+.app-live .app-main:has(.queue-split) { padding-bottom:calc(var(--bottom-nav-height) + env(safe-area-inset-bottom,0px) + 12px); }
+
+@media(prefers-reduced-motion:reduce){.queue-item{transition:none}}
+
+/* The destructive action exists only for an explicitly revealed left swipe. */
+.queue-delete { inset:0 0 0 auto; }
+.queue-scroll:has(.is-dragging) .queue-delete { visibility:hidden; pointer-events:none; }
+
+
+.delete-track { background: #bd293e; color: #fff; }

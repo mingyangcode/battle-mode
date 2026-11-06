@@ -1,0 +1,62 @@
+:root {
+  /* User-provided visual approximation, not an official QQ Music brand hex. */
+  --brand-green: #6fee79;
+  --accent-text: var(--brand-green);
+  --brand-green-strong: #18e972;
+  --brand-green-hover: #83f38b;
+  --brand-green-pressed: var(--brand-green-strong);
+  --brand-green-soft: #6fee791f;
+  --brand-green-border: #6fee794d;
+  --brand-green-surface: #6fee7914;
+  --on-brand: #101410;
+  --qq-green: var(--brand-green);
+  --qq-green-hover: var(--brand-green-hover);
+  --qq-green-pressed: var(--brand-green-pressed);
+  --qq-green-soft: var(--brand-green-soft);
+  --qq-green-glow: var(--brand-green-surface);
+  --bg-primary: #111314;
+  --bg-secondary: #171a1c;
+  --surface: #1d2123;
+  --surface-elevated: #292e31;
+  --surface-glass: #1d2123e8;
+  --text-primary: #f4f5f5;
+  --text-secondary: #bec5c7;
+  --text-tertiary: #99a3a7;
+  --on-accent: var(--on-brand);
+  --danger: #e6767d;
+  --danger-surface: #702e37;
+  --divider: #ffffff14;
+  --wave-muted: #53605e;
+  --wave-pre: #a0b5ac;
+  --wave-b: #83baca;
+  --radius-card: 24px;
+  --radius-small: 16px;
+  --radius-button: 14px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --text-small: 12px;
+  --text-body: 14px;
+  --text-title: 28px;
+  --motion-fast: 180ms;
+}
+
+:root:not([data-theme="dark"]) {
+  --accent-text: #226c32;
+  --bg-primary: #f7f8f7;
+  --bg-secondary: #eef1ef;
+  --surface: #ffffff;
+  --surface-elevated: #e9eeea;
+  --surface-glass: #fffffff0;
+  --text-primary: #161817;
+  --text-secondary: #505c54;
+  --text-tertiary: #657368;
+  --danger: #a82538;
+  --danger-surface: #ffe8eb;
+  --divider: #193b2324;
+  --wave-muted: #8e9d93;
+  --wave-pre: #667e70;
+}
