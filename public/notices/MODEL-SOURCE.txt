@@ -1,0 +1,10 @@
+MSD MusiCNN model — Music Technology Group, Universitat Pompeu Fabra.
+Unmodified TensorFlow.js weights from:
+https://github.com/MTG/essentia.js/tree/master/examples/starter-code/autotagging/models/msd-musicnn-1
+Research: https://arxiv.org/abs/1909.06654
+Weights SHA256: 7ebfb970c7389b6276ffc34f0d7fc80ba2765e5310829f3618ad5b977326667d
+Model documentation: https://essentia.upf.edu/models.html
+Licensing documentation: https://essentia.upf.edu/licensing_information.html
+The official pages currently differ (CC BY-NC-SA 4.0 / CC BY-NC-ND 4.0).
+Both restrict commercial use. Confirm the specific artifact license before release.
+Essentia.js and TensorFlow.js license copies accompany this notice.

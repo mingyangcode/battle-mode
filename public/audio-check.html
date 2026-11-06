@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>声音检测 · Battle Mode</title>
+<style>body{background:#111916;color:#ecf6ef;font:16px system-ui;margin:0;padding:24px;max-width:600px;margin:auto}h1{font-size:26px}p{line-height:1.6;color:#bbc9c1}section{background:#202b25;padding:18px;border-radius:16px;margin:16px 0}button{background:#34dc87;color:#082519;border:0;border-radius:12px;min-height:48px;padding:12px 20px;font-size:16px;width:100%}audio{width:100%;margin-top:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;color:#b7cbbf}small{display:block;margin-top:12px;color:#b7cbbf}</style>
+<h1>声音检测</h1><p>请用 iPhone Safari 打开，调高媒体音量，逐项测试。每项会播放约 2 秒轻柔提示音。此页不读取或上传你的音乐。</p>
+<section><h2>1 · 系统播放</h2><button id="native">播放系统提示音</button><audio id="media" controls playsinline></audio></section>
+<section><h2>2 · 网页音频</h2><button id="web">播放网页提示音</button></section>
+<section><h2>3 · 音乐播放模式</h2><button id="music">播放音乐模式提示音</button></section>
+<p>请告诉我 1、2、3 分别有声还是无声，并截图下方检测记录。按钮显示成功不代表扬声器一定有声音。</p><pre id="log"></pre>
+<script>
+const logEl=document.querySelector('#log'), media=document.querySelector('#media');
+function log(s){logEl.textContent+=s+'\n';}
+log('检测版本 2 · '+navigator.userAgent);
+// Original synthesized PCM WAV; identical samples for native and Web Audio tests.
+const rate=44100,n=rate*2,wav=new ArrayBuffer(44+n*2),v=new DataView(wav);
+function str(p,s){for(let i=0;i<s.length;i++)v.setUint8(p+i,s.charCodeAt(i));}
+str(0,'RIFF');v.setUint32(4,36+n*2,true);str(8,'WAVE');str(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);str(36,'data');v.setUint32(40,n*2,true);
+for(let i=0;i<n;i++){const envelope=Math.min(1,i/(rate*.03),(n-i)/(rate*.08));v.setInt16(44+i*2,Math.sin(2*Math.PI*440*i/rate)*.18*envelope*32767,true);}
+media.src=URL.createObjectURL(new Blob([wav],{type:'audio/wav'}));
+let ctx=null, serial=0;
+function reset(){serial++;media.pause();media.currentTime=0;if(ctx){ctx.close().catch(()=>{});ctx=null;}return serial;}
+function session(type){try{if(navigator.audioSession){navigator.audioSession.type=type;log('音频会话: '+navigator.audioSession.type);}else log('音频会话 API 不可用');}catch(e){log('会话设置: '+e.message);}}
+document.querySelector('#native').onclick=()=>{reset();session('auto');media.play().then(()=>log('1 系统播放已开始')).catch(e=>log('1 错误: '+e.message));};
+media.onended=()=>log('1 系统播放结束');media.onerror=()=>log('1 媒体错误: '+media.error?.code);
+async function test(music){const token=reset(),label=music?'3':'2';session(music?'playback':'auto');try{const c=new(window.AudioContext||window.webkitAudioContext)();ctx=c;const resumed=c.resume();log(label+' 初始状态: '+c.state);await resumed;const b=await c.decodeAudioData(wav.slice(0));if(token!==serial)return;const s=c.createBufferSource(),g=c.createGain(),master=c.createGain();s.buffer=b;g.gain.value=1;master.gain.value=1;s.connect(g).connect(master).connect(c.destination);s.start(c.currentTime+.05);log(label+' 已调度: '+c.state+' / '+c.sampleRate+'Hz / '+b.numberOfChannels+'声道');s.onended=()=>{log(label+' 结束: '+c.state+' / 时钟 '+c.currentTime.toFixed(2)+'s');s.disconnect();g.disconnect();master.disconnect();};}catch(e){log(label+' 错误: '+e.message);}}
+document.querySelector('#web').onclick=()=>test(false);document.querySelector('#music').onclick=()=>test(true);
+window.addEventListener('pagehide',()=>reset());
+</script></html>
