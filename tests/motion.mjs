@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+import {readFile} from 'node:fs/promises';
+const code=ts.transpileModule(await readFile('src/utils/motion.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const motion=await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'));
+let reduced=true, calls=0;
+globalThis.window={matchMedia:()=>({matches:reduced})};
+globalThis.document={getElementById:()=>({getBoundingClientRect:()=>({height:90}),animate:()=>{calls++;return {finished:Promise.resolve()};}})};
+await motion.collapseTrack('test');assert.equal(calls,0);
+reduced=false;await motion.collapseTrack('test');assert.equal(calls,1);
+globalThis.document={getElementById:()=>null};await motion.collapseTrack('test');
+console.log('PASS: reduced motion skips collapse, normal collapse completes, missing row is safe.');

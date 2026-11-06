@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+import {readFile} from 'node:fs/promises';
+const source=ts.transpileModule(await readFile('src/utils/api.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {resolveApiUrl:url}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+assert.equal(url('/api/analysis/jobs'),'/api/analysis/jobs');
+assert.equal(url('/api/analysis/jobs?q=1','https://api.example/api/','https:'),'https://api.example/api/analysis/jobs?q=1');
+assert.throws(()=>url('/api/analyze','http://api.example/api','https:'));
+for(const base of ['//evil.example/api','https://user:secret@api.example/api','javascript:foo','https://api.example/api?q=x']) assert.throws(()=>url('/api/analyze',base));
+console.log('API configuration tests passed');

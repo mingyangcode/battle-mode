@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Demo storage regression</title><pre id="result">Running</pre><script type="module">
+import {installDemo,demoInstalled,readTracks,readFile,removeTrack,saveTrack} from '/src/utils/storage.ts';
+const id='qa-demo-'+crypto.randomUUID(), t={id,title:'Disposable demo QA',duration:120,segmentStart:5,segmentEnd:50,preRoll:5,roundDuration:45,isPrepared:true,playedCount:0,mode:'same'};
+const result=[];function check(v,s){if(!v)throw Error(s);result.push('PASS '+s)}
+try {
+ await Promise.all([installDemo(t,new Blob(['audio'])),installDemo(t,new Blob(['audio']))]);
+ check((await readTracks()).filter(x=>x.id===id).length===1,'Concurrent install is idempotent');
+ check(await demoInstalled(id),'Marker committed');
+ check(await (await readFile(id)).text()==='audio','Audio committed with metadata');
+ await saveTrack({...t,title:'Edited'});await installDemo(t,new Blob(['replacement']));
+ check((await readTracks()).find(x=>x.id===id).title==='Edited','Reload preserves user edits');
+ await removeTrack(id);await installDemo(t,new Blob(['replacement']));
+ check(!(await readTracks()).some(x=>x.id===id),'Deleted demo stays deleted');
+ document.querySelector('#result').textContent=result.join('\n');
+} catch(e){document.querySelector('#result').textContent='FAIL '+e.stack}
+</script>

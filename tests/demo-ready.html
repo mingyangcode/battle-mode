@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>Prepared demo checks</title><button id="run">验证三首示例</button><pre id="result">Ready</pre><script type="module">
+import {prepareTrack,getPreparation} from '/src/state/autoAnalysis.ts';
+const originalFetch=window.fetch.bind(window);
+document.querySelector('#run').onclick=async()=>{
+ const messages=[];const check=(v,label)=>{if(!v)throw Error(label);messages.push('PASS '+label)};
+ try{
+ const {tracks}=await (await originalFetch('/demo/manifest.json')).json();check(tracks.length===3,'Three prepared songs');
+ let apiCalls=0;window.fetch=(input,init)=>{if(String(input).includes('/api/')){apiCalls++;return Promise.reject(new Error('Offline test'))}return originalFetch(input,init)};
+ for(const {track,audio} of tracks){
+ prepareTrack(track);check(getPreparation(track.id).status==='deep',track.title+' Deep ready without service');
+ const context=new AudioContext();try{const b=await context.decodeAudioData(await (await originalFetch(audio)).arrayBuffer());check(Math.abs(b.duration-track.duration)<.1,track.title+' full song decode');}finally{await context.close()}
+ const img=new Image();img.src=track.coverUrl;await img.decode();check(img.naturalWidth>0,track.title+' cover');
+ }
+ check(apiCalls===0,'No API requests for saved matching Deep results');
+ document.querySelector('#result').textContent=messages.join('\n');
+ }catch(e){document.querySelector('#result').textContent='FAIL '+e.stack}finally{window.fetch=originalFetch}
+};
+</script>

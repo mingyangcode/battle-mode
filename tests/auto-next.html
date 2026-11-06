@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><button id="run">Run auto next</button><pre id="result">Ready</pre><script type="module">
+import {AudioEngine} from '/src/audio/AudioEngine.ts';
+document.querySelector('#run').onclick=async()=>{const messages=[];const check=(v,s)=>{if(!v)throw Error(s);messages.push('PASS '+s)};try{
+for(const mode of ['same','matched','sequential']){
+ const ctx=new OfflineAudioContext(1,48000*24,48000),e=new AudioEngine();e.context=ctx;e.master=ctx.createGain();e.master.connect(ctx.destination);e.resume=async()=>{};
+ const a=ctx.createBuffer(1,48000*30,48000),b=ctx.createBuffer(1,48000*30,48000);a.getChannelData(0).fill(.4);b.getChannelData(0).fill(.4);
+ await e.start(a,{segmentStart:1,segmentEnd:2,preRoll:.5},{mode:'same',scratch:false});
+ const at=e.roundTiming().judging+1.5;
+ const first=ctx.suspend(at),pre=ctx.suspend(at+1),dance=ctx.suspend(at+5.2);const rendering=ctx.startRendering();await first;
+ check(await e.transitionToNextRound(b,{segmentStart:10,segmentEnd:12,preRoll:5},{mode,postRoll:1,segmentB:{start:17,end:19},scratch:false}),mode+' accepted');
+ check(!(await e.transitionToNextRound(b,{segmentStart:10,segmentEnd:12,preRoll:5},{mode})),mode+' double transition rejected');
+ check(e.snapshot().phase==='PRE_A',mode+' direct PRE A');check(Math.abs(e.snapshot().position-5)<.1,mode+' starts five seconds before segment');
+ await ctx.resume();await pre;check(e.snapshot().phase==='PRE_A',mode+' stays in PRE not inter-round background');
+ await ctx.resume();await dance;check(e.snapshot().phase==='DANCER_A',mode+' automatically starts dancer A');
+ e.stop();await ctx.resume();await rendering;e.stop();
+}
+document.querySelector('#result').textContent=messages.join('\n');}catch(e){document.querySelector('#result').textContent='FAIL '+e.stack}};
+</script>

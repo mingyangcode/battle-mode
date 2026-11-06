@@ -1,0 +1,10 @@
+<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>V1.1 mobile QA</title>
+<style>body{margin:0;background:#333;color:white}iframe{display:block;width:390px;height:844px;border:0}button{min-height:44px}</style>
+<button id="seed">Create disposable QA track</button><button id="cleanup">Remove QA fixtures</button><span id="result">Ready</span><iframe title="390px mobile app" src="/"></iframe>
+<script type="module">
+import {saveTrack,readTracks,removeTrack} from '/src/utils/storage.ts';
+import {demoBuffer} from '/src/audio/demo.ts';
+const id='v11-disposable-ui-qa';const frame=document.querySelector('iframe'),status=document.querySelector('#result');
+document.querySelector('#seed').onclick=async()=>{const ctx=new OfflineAudioContext(1,32000,8000),b=demoBuffer(ctx),data=b.getChannelData(0);const bytes=new ArrayBuffer(44+data.length*2),v=new DataView(bytes);const str=(p,s)=>[...s].forEach((c,i)=>v.setUint8(p+i,c.charCodeAt(0)));str(0,'RIFF');v.setUint32(4,36+data.length*2,true);str(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,16000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);str(36,'data');v.setUint32(40,data.length*2,true);data.forEach((x,i)=>v.setInt16(44+2*i,x*32767,true));await saveTrack({id,title:'V1.1 Disposable QA',duration:32,preRoll:5,postRoll:5,segmentStart:5,segmentEnd:7,roundDuration:2,mode:'same',isPrepared:true,playedCount:0},new Blob([bytes],{type:'audio/wav'}));status.textContent='QA track ready';frame.src='/';};
+document.querySelector('#cleanup').onclick=async()=>{if((await readTracks()).some(t=>t.id===id))await removeTrack(id);status.textContent='QA fixture removed';frame.src='/';};
+</script>

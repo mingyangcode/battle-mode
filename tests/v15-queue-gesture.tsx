@@ -1,0 +1,32 @@
+import React,{useRef,useState} from 'react';import {createRoot} from 'react-dom/client';import {QueueRow} from '../src/components/QueueRow';
+import '../src/style.css';import '../src/styles/redesign.css';import '../src/styles/v15.css';
+// Synthetic events cannot own a real browser pointer. Stub capture only in this isolated fixture;
+// real capture / iOS gesture arbitration is verified separately on the phone.
+HTMLElement.prototype.setPointerCapture=function(){};HTMLElement.prototype.releasePointerCapture=function(){};HTMLElement.prototype.hasPointerCapture=function(){return false};
+function Fixture(){const panel=useRef<HTMLDivElement>(null),[items,setItems]=useState(Array.from({length:8},(_,i)=>String(i)));
+return <div className="queue-scroll" ref={panel} style={{width:350,height:250}}>{items.map((id,i)=><QueueRow key={id} id={id} index={i} panel={panel} track={{id,title:'Song '+id,duration:60,segmentStart:5,segmentEnd:20,preRoll:5,isPrepared:true,playedCount:0}} onRemove={id=>setItems(xs=>xs.filter(x=>x!==id))} onMove={(id,index)=>setItems(xs=>{const a=xs.filter(x=>x!==id);a.splice(Math.max(0,Math.min(index,a.length)),0,id);return a})}/>)}</div>}
+const wait=(ms=30)=>new Promise(r=>setTimeout(r,ms));
+document.querySelector<HTMLButtonElement>('#run')!.onclick=async()=>{const root=createRoot(document.querySelector('#root')!);const results:string[]=[];const check=(v:boolean,s:string)=>{if(!v)throw Error(s);results.push('PASS '+s)};
+try{root.render(<Fixture/>);await wait();const row=(id:string)=>document.querySelector<HTMLElement>(`[data-queue-id="${id}"] .queue-item`)!;
+const send=(el:HTMLElement,type:string,x:number,y:number)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:1,isPrimary:true,button:0,clientX:x,clientY:y}));
+const del=(id:string)=>document.querySelector<HTMLButtonElement>(`[data-queue-id="${id}"] .queue-delete`)!;
+const swipe=async(id:string,dx:number)=>{const el=row(id),r=el.getBoundingClientRect();send(el,'pointerdown',r.left+180,r.top+20);send(el,'pointermove',r.left+180+dx,r.top+20);send(el,'pointerup',r.left+180+dx,r.top+20);await wait()};
+await swipe('0',-60);check(row('0').style.transform.includes('-88px'),'partial left swipe stays open');
+check(!del('0').hidden&&!del('0').disabled,'explicit Delete becomes available');
+del('0').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:1}));await wait();check(!!row('0'),'unarmed release click cannot delete');
+send(del('0'),'pointerdown',320,30);del('0').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:1}));await wait();check(!row('0'),'separate Delete press removes item');
+await swipe('1',-260);check(!!row('1')&&row('1').style.transform.includes('-88px'),'full left swipe never deletes');
+await swipe('1',100);check(row('1').style.transform.includes('0px'),'right swipe closes');
+await swipe('1',-60);
+let el=row('1'),r=el.getBoundingClientRect();send(el,'pointerdown',r.left+20,r.top+20);await wait(430);
+check(el.classList.contains('dragging'),'long press lifts row');
+check(del('1').hidden&&del('1').disabled,'drag closes and disables delete underlay');
+const destination=row('2').getBoundingClientRect();send(el,'pointermove',r.left-120,destination.top+destination.height/2);await wait(45);
+check(el.style.transform.startsWith('translate(0px'),'diagonal drag cannot become swipe');
+send(el,'pointerup',r.left-120,destination.top+destination.height/2);await wait();
+check(document.querySelector('[data-queue-id]')?.getAttribute('data-queue-id')==='2','long press drag changes order');
+del('1').dispatchEvent(new MouseEvent('click',{bubbles:true,detail:1}));await wait();check(!!row('1'),'drag release cannot remove item');
+el=row('2');r=el.getBoundingClientRect();send(el,'pointerdown',r.left+20,r.top+50);send(el,'pointermove',r.left+20,r.top+10);await wait(450);check(!el.classList.contains('dragging'),'vertical motion cancels long press');check(document.querySelector('.queue-scroll')!.scrollTop>0,'vertical motion scrolls queue');send(el,'pointerup',r.left+20,r.top+10);
+await swipe('2',-60);el=row('2');r=el.getBoundingClientRect();send(el,'pointerdown',r.left+20,r.top+20);send(el,'pointercancel',r.left+20,r.top+20);await wait(430);check(!el.classList.contains('dragging')&&del('2').hidden,'pointer cancel clears hold and reveal');
+check(getComputedStyle(el).webkitUserSelect==='none','Safari text selection disabled');
+document.querySelector('#result')!.textContent=results.join('\n');}catch(e){document.querySelector('#result')!.textContent='FAIL '+e} };

@@ -1,0 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Battle Mode · V1.5 本地验收</title></head><body><div id="root"></div><script type="module">
+// Development-only LAN harness: Web Crypto getRandomValues remains available on HTTP.
+// Production index.html and production bundles never import this shim.
+if (!crypto.randomUUID) crypto.randomUUID = () => {const bytes=crypto.getRandomValues(new Uint8Array(16));bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;const h=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;};
+try { document.documentElement.dataset.theme=localStorage.getItem('battle-theme')||'light'; } catch {}
+await import('/src/main.tsx');
+</script></body></html>
